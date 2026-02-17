@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Azterketak Zuzentzailea</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:      #2d6a4f;
+  --green-dark: #1b4332;
+  --amber:      #e9c46a;
+  --red:        #c1121f;
+  --blue:       #2563eb;
+  --blue-light: #dbeafe;
+  --purple:     #7c3aed;
+  --purple-light: #ede9fe;
+  --bg:         #f8f5f0;
+  --bg-card:    #ffffff;
+  --bg-subtle:  #f0ebe3;
+  --text:       #1a1a1a;
+  --text-soft:  #5a5a5a;
+  --text-muted: #9a9a9a;
+  --border:     #ddd8d0;
+  --shadow:     0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg:  0 8px 24px rgba(0,0,0,0.12);
+  --radius:     12px;
+  --radius-sm:  8px;
+  --tap:        44px;
+}
+[data-theme="dark"] {
+  --bg:         #121212;
+  --bg-card:    #1e1e1e;
+  --bg-subtle:  #2a2a2a;
+  --text:       #f0ede8;
+  --text-soft:  #a8a8a8;
+  --text-muted: #666666;
+  --border:     #333333;
+  --shadow:     0 2px 8px rgba(0,0,0,0.4);
+  --shadow-lg:  0 8px 24px rgba(0,0,0,0.5);
+  --purple-light: rgba(124,58,237,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Source Sans 3',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;transition:background 0.3s,color 0.3s;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── HEADER ── */
+.header{
+  background:var(--green-dark);color:white;
+  padding:14px 18px;display:flex;align-items:center;
+  justify-content:space-between;box-shadow:var(--shadow-lg);
+  position:sticky;top:0;z-index:100;
+}
+.header-left h1{font-family:'Lora',serif;font-size:1.35rem;font-weight:700;letter-spacing:-0.3px;}
+.header-left p{font-size:0.78rem;opacity:0.65;margin-top:2px;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.hbtn{
+  background:rgba(255,255,255,0.15);border:none;color:white;
+  min-width:var(--tap);height:var(--tap);border-radius:50%;cursor:pointer;
+  font-size:1rem;display:flex;align-items:center;justify-content:center;
+  transition:background 0.2s;flex-shrink:0;padding:0 10px;
+}
+.hbtn:hover{background:rgba(255,255,255,0.28);}
+#langBtn{font-size:0.72rem;font-weight:800;letter-spacing:0.5px;}
+
+/* ── LAYOUT ── */
+.main{max-width:860px;margin:0 auto;padding:22px 15px 72px;}
+
+/* ── BOTONES ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:0 18px;height:var(--tap);border:none;border-radius:var(--radius-sm);
+  font-family:'Source Sans 3',sans-serif;font-size:0.92rem;
+  font-weight:600;cursor:pointer;transition:all 0.2s;text-decoration:none;
+  white-space:nowrap;
+}
+.btn-primary{background:var(--green);color:white;}
+.btn-primary:hover{background:var(--green-dark);transform:translateY(-1px);box-shadow:var(--shadow);}
+.btn-primary:active{transform:translateY(0);}
+.btn-secondary{background:var(--bg-subtle);color:var(--text);border:1px solid var(--border);}
+.btn-secondary:hover{border-color:var(--green);color:var(--green);}
+.btn-danger{background:transparent;color:var(--red);border:1px solid transparent;}
+.btn-danger:hover{background:#fff0f0;border-color:var(--red);}
+.btn-sm{height:36px;padding:0 13px;font-size:0.83rem;}
+.btn-full{width:100%;}
+.btn-lg{height:52px;font-size:1rem;border-radius:var(--radius);}
+
+/* ── CARDS ── */
+.card{
+  background:var(--bg-card);border-radius:var(--radius);
+  border:1px solid var(--border);padding:20px;
+  box-shadow:var(--shadow);transition:background 0.3s,border-color 0.3s;
+}
+.card+.card{margin-top:13px;}
+
+/* ── API KEY BANNER ── */
+.apikey-banner{
+  background:linear-gradient(135deg,#fef3c7,#fde68a);
+  border:2px solid #f59e0b;border-radius:var(--radius);
+  padding:16px 18px;margin-bottom:20px;
+}
+[data-theme="dark"] .apikey-banner{background:rgba(245,158,11,0.12);border-color:#f59e0b;}
+.apikey-banner-row{display:flex;align-items:flex-start;gap:12px;}
+.apikey-banner-icon{font-size:1.6rem;flex-shrink:0;margin-top:2px;}
+.apikey-banner-text h3{font-size:0.9rem;font-weight:700;color:#92400e;margin-bottom:3px;}
+[data-theme="dark"] .apikey-banner-text h3{color:#fcd34d;}
+.apikey-banner-text p{font-size:0.8rem;color:#78350f;line-height:1.4;}
+[data-theme="dark"] .apikey-banner-text p{color:#fbbf24;}
+.apikey-input-row{display:flex;gap:8px;margin-top:10px;}
+.apikey-input{
+  flex:1;padding:10px 13px;border:2px solid #f59e0b;
+  border-radius:var(--radius-sm);font-family:'Source Sans 3',sans-serif;
+  font-size:0.88rem;background:white;color:#1a1a1a;min-width:0;
+}
+[data-theme="dark"] .apikey-input{background:#2a2a2a;color:var(--text);}
+.apikey-input:focus{outline:none;box-shadow:0 0 0 3px rgba(245,158,11,0.25);}
+.apikey-saved{color:#16a34a;font-size:0.8rem;font-weight:600;margin-top:5px;display:none;}
+
+/* ── FORMS ── */
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-weight:600;font-size:0.86rem;margin-bottom:5px;color:var(--text);}
+.form-hint{font-size:0.76rem;color:var(--text-muted);margin-top:3px;}
+.form-input,.form-textarea{
+  width:100%;padding:10px 13px;border:2px solid var(--border);
+  border-radius:var(--radius-sm);font-family:'Source Sans 3',sans-serif;
+  font-size:0.92rem;background:var(--bg);color:var(--text);
+  transition:border-color 0.2s,background 0.3s;
+}
+.form-input{height:var(--tap);}
+.form-input:focus,.form-textarea:focus{
+  outline:none;border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(45,106,79,0.12);
+}
+.form-textarea{min-height:100px;resize:vertical;line-height:1.6;height:auto;}
+.form-input-sm{width:110px;}
+
+/* ── SECTION HEADER ── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;}
+.section-title{font-family:'Lora',serif;font-size:1.35rem;font-weight:700;color:var(--text);}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:48px 20px;}
+.empty-state-icon{font-size:3rem;margin-bottom:12px;opacity:0.2;}
+.empty-state h3{font-family:'Lora',serif;font-size:1.1rem;color:var(--text-soft);margin-bottom:6px;}
+.empty-state p{color:var(--text-muted);margin-bottom:20px;font-size:0.9rem;}
+
+/* ── EXAM LIST ── */
+.exam-list{display:flex;flex-direction:column;gap:10px;}
+.exam-card{
+  background:var(--bg-card);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:16px 18px;
+  transition:all 0.2s;box-shadow:var(--shadow);
+}
+.exam-card:hover{border-color:var(--green);box-shadow:var(--shadow-lg);transform:translateX(3px);}
+.exam-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px;gap:10px;}
+.exam-card-name{font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--green-dark);margin-bottom:3px;}
+.exam-card-meta{font-size:0.8rem;color:var(--text-muted);display:flex;gap:12px;flex-wrap:wrap;}
+.exam-badge{background:var(--amber);color:var(--green-dark);font-weight:700;font-size:0.8rem;padding:4px 11px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.exam-card-actions{display:flex;gap:7px;flex-wrap:wrap;}
+
+/* ── TIPO PREGUNTA selector principal ── */
+.qtype-sel{
+  display:flex;gap:4px;background:var(--bg);padding:3px;
+  border-radius:var(--radius-sm);border:2px solid var(--border);margin-bottom:14px;
+}
+.qtbtn{
+  flex:1;padding:9px 8px;background:transparent;border:none;
+  border-radius:6px;font-family:'Source Sans 3',sans-serif;
+  font-size:0.82rem;font-weight:700;color:var(--text-muted);cursor:pointer;
+  transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.qtbtn.active-luze{background:var(--green);color:white;box-shadow:var(--shadow);}
+.qtbtn.active-test{background:var(--purple);color:white;box-shadow:var(--shadow);}
+
+/* ── ANSWER TYPE (dentro de galdera luzea) ── */
+.answer-type-sel{
+  display:flex;gap:3px;background:var(--bg);padding:3px;
+  border-radius:var(--radius-sm);border:1.5px solid var(--border);margin-bottom:13px;
+}
+.atbtn{
+  flex:1;padding:7px 6px;background:transparent;border:none;
+  border-radius:6px;font-family:'Source Sans 3',sans-serif;
+  font-size:0.78rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all 0.2s;
+}
+.atbtn.active{background:var(--green);color:white;box-shadow:var(--shadow);}
+
+/* ── QUESTION CARD ── */
+.question-card{
+  background:var(--bg-subtle);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:16px;margin-bottom:11px;
+  transition:background 0.3s;
+}
+.question-card.is-test{border-color:rgba(124,58,237,0.35);background:rgba(124,58,237,0.03);}
+[data-theme="dark"] .question-card.is-test{background:rgba(124,58,237,0.07);}
+.question-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;}
+.question-badge{color:white;font-size:0.75rem;font-weight:700;padding:3px 11px;border-radius:20px;}
+.question-badge.badge-luze{background:var(--green);}
+.question-badge.badge-test{background:var(--purple);}
+
+/* ── KEYPOINTS ── */
+.kp-row{display:flex;gap:7px;margin-bottom:7px;align-items:center;}
+.kp-row .form-input{flex:1;}
+.kp-num{
+  width:22px;height:22px;background:var(--green);color:white;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:0.7rem;font-weight:700;flex-shrink:0;
+}
+
+/* ── TEST OPTIONS ── */
+.test-options{margin-top:4px;}
+.test-opt-row{display:flex;gap:7px;margin-bottom:8px;align-items:center;}
+.test-opt-letter{
+  width:28px;height:28px;background:var(--purple);color:white;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:700;flex-shrink:0;
+}
+.test-opt-row .form-input{flex:1;}
+.test-correct-sel{
+  display:flex;gap:4px;background:var(--bg);padding:3px;
+  border-radius:var(--radius-sm);border:1.5px solid var(--border);margin-top:11px;
+}
+.tcbtn{
+  flex:1;padding:6px 4px;background:transparent;border:none;
+  border-radius:5px;font-family:'Source Sans 3',sans-serif;
+  font-size:0.75rem;font-weight:700;color:var(--text-muted);cursor:pointer;transition:all 0.2s;
+}
+.tcbtn.active{background:var(--purple);color:white;box-shadow:var(--shadow);}
+.test-correct-lbl{font-size:0.8rem;font-weight:600;margin-bottom:5px;color:var(--text-soft);}
+
+/* ── PASOS ── */
+.step-indicator{display:flex;align-items:center;justify-content:center;margin-bottom:22px;}
+.step{display:flex;align-items:center;gap:7px;}
+.step-circle{
+  width:30px;height:30px;border-radius:50%;background:var(--border);
+  color:var(--text-muted);font-weight:700;font-size:0.85rem;
+  display:flex;align-items:center;justify-content:center;transition:all 0.3s;
+}
+.step-circle.active{background:var(--green);color:white;}
+.step-label{font-size:0.82rem;font-weight:600;color:var(--text-muted);transition:color 0.3s;}
+.step-label.active{color:var(--text);}
+.step-line{width:40px;height:2px;background:var(--border);margin:0 7px;transition:background 0.3s;}
+.step-line.active{background:var(--green);}
+
+/* ── UPLOAD ── */
+.upload-divider{
+  text-align:center;color:var(--text-muted);font-size:0.8rem;
+  font-weight:600;margin:10px 0;position:relative;
+}
+.upload-divider::before,.upload-divider::after{
+  content:'';position:absolute;top:50%;width:43%;height:1px;background:var(--border);
+}
+.upload-divider::before{left:0;}
+.upload-divider::after{right:0;}
+
+/* ── THUMBNAILS MULTI-FOTO ── */
+.photo-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+  gap:8px;margin-top:12px;
+}
+.photo-thumb{
+  position:relative;border-radius:var(--radius-sm);overflow:hidden;
+  border:2px solid var(--border);aspect-ratio:3/4;cursor:pointer;
+  transition:border-color 0.2s;
+}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo-thumb-del{
+  position:absolute;top:3px;right:3px;background:rgba(193,18,31,0.85);
+  color:white;border:none;border-radius:50%;width:22px;height:22px;
+  font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-weight:700;transition:background 0.2s;
+}
+.photo-thumb-del:hover{background:var(--red);}
+.photo-thumb-num{
+  position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.55);
+  color:white;font-size:0.65rem;font-weight:700;text-align:center;padding:2px 0;
+}
+.photo-add-btn{
+  border:2px dashed var(--border);border-radius:var(--radius-sm);
+  aspect-ratio:3/4;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:5px;
+  cursor:pointer;background:var(--bg-subtle);transition:all 0.2s;
+  color:var(--text-muted);font-size:0.72rem;font-weight:600;
+}
+.photo-add-btn:hover{border-color:var(--green);color:var(--green);background:rgba(45,106,79,0.04);}
+.photo-add-icon{font-size:1.5rem;}
+.photos-ready-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(45,106,79,0.08);border:1.5px solid rgba(45,106,79,0.25);
+  border-radius:var(--radius-sm);padding:10px 14px;margin-top:12px;
+}
+.photos-ready-txt{font-size:0.85rem;font-weight:600;color:var(--green);display:flex;align-items:center;gap:6px;}
+
+/* ── ANÁLISIS ── */
+.analyzing-screen{text-align:center;padding:50px 20px;}
+.spinner{
+  width:46px;height:46px;border:4px solid var(--border);
+  border-top-color:var(--green);border-radius:50%;
+  animation:spin 0.9s linear infinite;margin:0 auto 20px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.analyzing-screen h3{font-family:'Lora',serif;font-size:1.25rem;margin-bottom:8px;}
+.analyzing-screen p{color:var(--text-soft);font-size:0.86rem;}
+.timer-note{color:var(--text-muted)!important;font-size:0.76rem!important;margin-top:5px;}
+
+/* ── ERROR ── */
+.error-screen{text-align:center;padding:40px 20px;}
+.error-icon{font-size:2.6rem;margin-bottom:12px;}
+.error-screen h3{font-family:'Lora',serif;font-size:1.1rem;color:var(--red);margin-bottom:8px;}
+.error-screen p{color:var(--text-soft);font-size:0.86rem;margin-bottom:20px;}
+
+/* ── RESULTADOS ── */
+.result-q{background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.result-q.result-test{border-color:rgba(124,58,237,0.3);}
+.result-q-hdr{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 16px;background:var(--bg-subtle);border-bottom:1px solid var(--border);}
+.result-q-title{font-weight:600;font-size:0.9rem;line-height:1.4;}
+.result-sec{padding:11px 16px;border-bottom:1px solid var(--border);}
+.result-sec:last-child{border-bottom:none;}
+.result-sec-lbl{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);margin-bottom:5px;}
+.result-sec-txt{font-size:0.86rem;line-height:1.6;color:var(--text);}
+.ai-box{background:var(--blue-light);border-left:3px solid var(--blue);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px;}
+[data-theme="dark"] .ai-box{background:rgba(37,99,235,0.1);}
+.ai-box.ai-test{background:var(--purple-light);border-left-color:var(--purple);}
+.ai-score{font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:4px;}
+.ai-score.ai-score-test{color:var(--purple);}
+.teacher-box{background:rgba(45,106,79,0.07);border-left:3px solid var(--green);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px;}
+.score-row{display:flex;align-items:center;gap:10px;}
+.score-inp{
+  width:82px;padding:8px 10px;border:2px solid var(--green);
+  border-radius:var(--radius-sm);font-size:1.1rem;font-weight:700;
+  text-align:center;font-family:'Lora',serif;color:var(--green-dark);background:var(--bg-card);
+}
+.score-inp:focus{outline:none;box-shadow:0 0 0 3px rgba(45,106,79,0.2);}
+.score-max{font-size:0.92rem;color:var(--text-soft);font-weight:500;}
+
+/* ── TEST RESULT ── */
+.test-result-opts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.test-result-opt{
+  display:flex;align-items:center;gap:5px;padding:5px 10px;
+  border-radius:20px;font-size:0.82rem;font-weight:600;
+  border:2px solid var(--border);
+}
+.test-result-opt.is-correct{background:#f0fdf4;border-color:#16a34a;color:#15803d;}
+.test-result-opt.is-marked{background:var(--blue-light);border-color:var(--blue);color:var(--blue);}
+.test-result-opt.is-correct.is-marked{background:#f0fdf4;border-color:#16a34a;color:#15803d;}
+.test-result-opt.is-wrong{background:#fff1f2;border-color:var(--red);color:var(--red);}
+
+/* ── FOTO REFERENCIA (en resultados) ── */
+.photo-refs{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:13px;}
+.photo-refs-lbl{background:var(--bg-subtle);padding:8px 14px;font-size:0.73rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);}
+.photo-refs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:0;}
+.photo-refs-grid img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;border-right:1px solid var(--border);}
+.photo-refs-grid img:last-child{border-right:none;}
+
+/* ── TOTAL ── */
+.total-card{
+  background:linear-gradient(135deg,var(--green-dark),var(--green));
+  color:white;border-radius:var(--radius);padding:22px 26px;
+  display:flex;justify-content:space-between;align-items:center;
+  box-shadow:var(--shadow-lg);margin-top:7px;
+}
+.total-label{font-family:'Lora',serif;font-size:1.05rem;font-weight:700;opacity:0.9;}
+.total-score{font-family:'Lora',serif;font-size:2.5rem;font-weight:700;letter-spacing:-1px;}
+
+/* ── ALERTAS ── */
+.alert{padding:11px 15px;border-radius:var(--radius-sm);font-size:0.86rem;font-weight:500;margin-bottom:16px;border-left:4px solid;animation:slideIn 0.3s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.alert-success{background:#f0fdf4;border-color:#16a34a;color:#15803d;}
+.alert-error{background:#fff1f2;border-color:var(--red);color:var(--red);}
+
+/* ── ACTION BAR ── */
+.action-bar{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:16px;border-top:1px solid var(--border);gap:10px;}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.55);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;animation:fadeIn 0.15s ease;padding:15px;
+}
+.modal-box{
+  background:var(--bg-card);border-radius:var(--radius);
+  padding:26px 22px;max-width:360px;width:100%;
+  box-shadow:var(--shadow-lg);text-align:center;
+}
+.modal-box h3{font-family:'Lora',serif;margin-bottom:8px;color:var(--text);font-size:1.05rem;}
+.modal-box p{color:var(--text-soft);font-size:0.86rem;margin-bottom:20px;}
+.modal-btns{display:flex;gap:10px;justify-content:center;}
+
+/* ── ANIMACIONES ── */
+.view{animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.hidden{display:none!important;}
+
+/* ── RESPONSIVE MÓVIL ── */
+@media(max-width:640px){
+  .header{padding:12px 14px;}
+  .header-left h1{font-size:1.1rem;}
+  .header-left p{display:none;}
+  .main{padding:15px 11px 80px;}
+  .exam-card-top{flex-direction:column;gap:8px;}
+  .total-card{flex-direction:column;text-align:center;gap:8px;padding:18px;}
+  .total-score{font-size:2.1rem;}
+  .step-label{display:none;}
+  .atbtn{font-size:0.72rem;padding:6px 4px;}
+  .qtbtn{font-size:0.75rem;}
+  .apikey-input-row{flex-direction:column;}
+  .action-bar{flex-wrap:wrap;}
+  .action-bar .btn{flex:1;}
+  .photo-grid{grid-template-columns:repeat(auto-fill,minmax(75px,1fr));}
+}
+@media(max-width:380px){
+  .qtype-sel{flex-direction:column;}
+  .qtbtn{flex:none;border-radius:var(--radius-sm);}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <h1 id="hTitle">📚 Azterketak Zuzentzailea</h1>
+    <p  id="hSubtitle">Historiako azterketak zuzentzeko tresna adimenduna</p>
+  </div>
+  <div class="header-right">
+    <button class="hbtn" id="langBtn">ES</button>
+    <button class="hbtn" id="themeBtn">🌙</button>
+  </div>
+</header>
+
+<main class="main">
+  <div id="alertBox" class="hidden"></div>
+
+  <!-- ═══ PANTALLA INICIO ═══ -->
+  <div id="viewHome" class="view">
+    <!-- API KEY BANNER -->
+    <div class="apikey-banner" id="apikeyBanner">
+      <div class="apikey-banner-row">
+        <div class="apikey-banner-icon">🔑</div>
+        <div class="apikey-banner-text" style="flex:1;">
+          <h3 id="apikeyTitle">Sartu zure Google Gemini API gakoa</h3>
+          <p  id="apikeyDesc">Google AI Studio-tik lortutako gakoa behar da IA-k lan egiteko.</p>
+          <div class="apikey-input-row">
+            <input type="password" class="apikey-input" id="apikeyInput" placeholder="AIza..." autocomplete="off">
+            <button class="btn btn-primary btn-sm" id="apikeyBtn" onclick="saveApiKey()">💾 Gorde</button>
+          </div>
+          <div class="apikey-saved" id="apikeySaved">✓ API gakoa gordeta</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2 class="section-title" id="hMyExams">Nire Azterketak</h2>
+      <button class="btn btn-primary" id="hNewExamBtn" onclick="goNewExam()">＋ Azterketa Berria</button>
+    </div>
+    <div id="examList"></div>
+  </div>
+
+  <!-- ═══ PANTALLA CONFIG ═══ -->
+  <div id="viewConfig" class="view hidden">
+    <div class="section-header">
+      <h2 class="section-title" id="configTitle">Azterketa Berria</h2>
+      <button class="btn btn-secondary" id="configBackBtn" onclick="showView('viewHome')">← Atzera</button>
+    </div>
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label" id="lExamName">Azterketaren izena *</label>
+        <input type="text" class="form-input" id="examNameInput" placeholder="adib: Erdi Aroa — 1. ebaluazioa">
+        <p class="form-hint" id="lExamNameHint">Azterketa identifikatzeko izena</p>
+      </div>
+    </div>
+    <div class="section-header" style="margin-top:20px;">
+      <h3 style="font-size:1rem;font-weight:700;" id="lQuestions">
+        Galderak <span id="qCount" style="color:var(--text-muted);font-size:0.85rem;">(0)</span>
+      </h3>
+      <button class="btn btn-secondary btn-sm" id="addQBtn" onclick="addQuestion()">＋ Gehitu</button>
+    </div>
+    <div id="questionList"></div>
+    <div class="action-bar">
+      <button class="btn btn-secondary" id="configCancelBtn" onclick="showView('viewHome')">Utzi</button>
+      <button class="btn btn-primary"   id="configSaveBtn"   onclick="saveExam()">💾 Gorde</button>
+    </div>
+  </div>
+
+  <!-- ═══ PANTALLA CORRECCIÓN ═══ -->
+  <div id="viewCorrection" class="view hidden">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title" id="corrTitle">Zuzendu</h2>
+        <p style="color:var(--text-muted);font-size:0.82rem;margin-top:2px;" id="corrMeta"></p>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="corrBackBtn" onclick="showView('viewHome')">← Hasierara</button>
+    </div>
+
+    <!-- Pasos -->
+    <div class="step-indicator">
+      <div class="step">
+        <div class="step-circle active" id="s1c">1</div>
+        <span class="step-label active" id="s1l">Argazkiak igo</span>
+      </div>
+      <div class="step-line" id="sLine"></div>
+      <div class="step">
+        <div class="step-circle" id="s2c">2</div>
+        <span class="step-label" id="s2l">IA azterketa</span>
+      </div>
+    </div>
+
+    <!-- PASO 1: subir fotos -->
+    <div id="stepUpload">
+      <div class="card">
+        <h3 style="font-family:'Lora',serif;font-size:1rem;margin-bottom:14px;" id="photoCardTitle">📸 Azterketaren argazkiak</h3>
+
+        <!-- Botones añadir -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-lg" style="flex:1;min-width:140px;" id="cameraBtn" onclick="openCamera()">
+            📸 &nbsp;Argazkia atera
+          </button>
+          <label style="flex:1;min-width:140px;cursor:pointer;">
+            <input type="file" id="fileInput" accept="image/*" multiple class="hidden" onchange="handleFiles(event)">
+            <div class="btn btn-secondary btn-lg btn-full" id="galleryBtnText">
+              📁 &nbsp;Galeriatik
+            </div>
+          </label>
+        </div>
+        <p style="text-align:center;color:var(--text-muted);font-size:0.76rem;margin-top:8px;" id="mobileHint">
+          📱 Argazki bat edo gehiago igo ditzakezu
+        </p>
+
+        <!-- Grid de fotos -->
+        <div class="photo-grid" id="photoGrid"></div>
+
+        <!-- Barra de listo -->
+        <div class="photos-ready-bar hidden" id="photosReadyBar">
+          <span class="photos-ready-txt" id="photosReadyTxt">✓ 1 argazki kargatuta</span>
+          <button class="btn btn-primary" id="startAIBtn" onclick="startAnalysis()">
+            🤖 IA azterketa hasi →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASO 2: análisis -->
+    <div id="stepAnalysis" class="hidden">
+
+      <!-- Cargando -->
+      <div class="card" id="analyzingBox">
+        <div class="analyzing-screen">
+          <div class="spinner"></div>
+          <h3 id="analyzingTitle">🤖 IA azterketa aztertzen...</h3>
+          <p  id="analyzingDesc">Argazkiak irakurtzen eta erantzunak aztertzen ari da</p>
+          <p  id="analyzingTime" class="timer-note">Honek 20–40 segundo iraun dezake</p>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="card hidden" id="errorBox">
+        <div class="error-screen">
+          <div class="error-icon">⚠️</div>
+          <h3 id="errorTitle">Errorea gertatu da</h3>
+          <p  id="errorMsg"></p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+            <button class="btn btn-secondary" id="errBackBtn"  onclick="backToUpload()">← Atzera</button>
+            <button class="btn btn-primary"   id="errRetryBtn" onclick="startAnalysis()">🔄 Berriro saiatu</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resultados -->
+      <div id="resultsBox" class="hidden">
+        <!-- Miniaturas referencia -->
+        <div class="photo-refs">
+          <div class="photo-refs-lbl" id="photoRefLbl">📄 Azterketaren argazkiak</div>
+          <div class="photo-refs-grid" id="resultsPhotoGrid"></div>
+        </div>
+        <div id="resultsList"></div>
+        <div class="total-card">
+          <div class="total-label" id="totalLbl">📊 Azken kalifikazioa</div>
+          <div class="total-score" id="totalScore">0 / 0</div>
+        </div>
+        <div class="action-bar">
+          <button class="btn btn-secondary" id="anotherBtn" onclick="backToUpload()">← Beste azterketa bat</button>
+          <button class="btn btn-primary"   id="finishBtn"  onclick="showView('viewHome')">✓ Bukatu</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- Modal borrar -->
+<div id="deleteModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div style="font-size:2.2rem;margin-bottom:10px;">🗑️</div>
+    <h3 id="modalTitle">Ziur zaude?</h3>
+    <p  id="modalBody">Azterketa hau behin betiko ezabatuko da.</p>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" id="modalCancelBtn">Utzi</button>
+      <button class="btn btn-primary"   id="modalConfirmBtn" style="background:var(--red);">🗑️ Ezabatu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  TRADUCCIONES
+// ══════════════════════════════════════════════════════
+const LANG = {
+eu:{
+  appTitle:'📚 Azterketak Zuzentzailea',
+  appSubtitle:'Historiako azterketak zuzentzeko tresna adimenduna',
+  myExams:'Nire Azterketak',
+  newExam:'＋ Azterketa Berria',
+  noExams:'Oraindik ez dago azterketa gorderik',
+  noExamsHint:'Sortu zure lehenengo azterketa',
+  createFirst:'＋ Azterketa berria sortu',
+  q:'galdera',pts:'puntu',
+  correct:'✏️ Zuzendu',edit:'⚙️ Editatu',del:'🗑️ Ezabatu',
+  newExamT:'Azterketa Berria',editExamT:'Azterketa editatu',
+  back:'← Atzera',
+  nameLabel:'Azterketaren izena *',nameHint:'Azterketa identifikatzeko izena',
+  namePH:'adib: Erdi Aroa — 1. ebaluazioa',
+  questionsLbl:'Galderak',addQ:'＋ Gehitu',
+  qtLuze:'📝 Galdera luzea',qtTest:'☑️ Test galdera',
+  statementLbl:'Enuntziatua *',statementPH:'Idatzi galderaren enuntziatua...',
+  maxScoreLbl:'Gehienezko puntuazioa *',
+  modelLbl:'Erantzun eredua',
+  fullBtn:'📄 Erantzun Osoa',kpBtn:'🔑 Gako-Puntuak',bothBtn:'✨ Biak',
+  modelFullLbl:'Ereduzko erantzun osoa',
+  modelFullPH:'Ikasle bikain batek emango lukeen erantzuna...',
+  kpLbl:'Gako-puntuak',kpHint:'Erantzunak bete behar dituen kontzeptu nagusiak',
+  kpPH:'. kontzeptua',addKp:'＋ Kontzeptua gehitu',
+  testOptionsLbl:'Test aukerak',
+  testOptionPH:'. aukera',
+  testCorrectLbl:'Erantzun zuzena',
+  testScoreCorrect:'Zuzen: ',testScoreWrong:'Oker: ',
+  cancel:'Utzi',save:'💾 Gorde',delQ:'🗑️ Ezabatu',
+  saved:'Azterketa ondo gorde da ✓',deleted:'Azterketa ezabatu da',
+  errName:'Mesedez, sartu azterketaren izena',
+  errMinQ:'Gehitu gutxienez galdera bat',
+  errStmt:'Galdera guztiek enuntziatua behar dute',
+  errOneQ:'Gutxienez galdera bat behar da',
+  errTestOpts:'Test galderak gutxienez 2 aukera behar dituzte',
+  corrTitle:'Zuzendu',backHome:'← Hasierara',
+  step1:'Argazkiak igo',step2:'IA azterketa',
+  photoTitle:'📸 Azterketaren argazkiak',
+  cameraBtn:'📸 \u00a0Argazkia atera',galleryBtn:'📁 \u00a0Galeriatik',
+  mobileHint:'📱 Argazki bat edo gehiago igo ditzakezu',
+  photosLoaded:'argazki kargatuta',
+  startAI:'🤖 IA azterketa hasi →',
+  analyzing:'🤖 IA azterketa aztertzen...',
+  analyzingDesc:'Argazkiak irakurtzen eta erantzunak aztertzen ari da',
+  analyzingTime:'Honek 20–40 segundo iraun dezake',
+  errTitle:'Errorea gertatu da',retry:'🔄 Berriro saiatu',
+  photoRef:'📄 Azterketaren argazkiak',
+  studentAns:'📝 Ikaslearen erantzuna (IA-k irakurritakoa)',
+  studentMark:'📝 IA-k hautemandako markaketa',
+  aiSug:'🤖 IA-ren iradokizuna',
+  why:'Zergatik:',
+  yourScore:'✏️ Zure azken puntuazioa',
+  totalLbl:'📊 Azken kalifikazioa',
+  another:'← Beste azterketa bat',finish:'✓ Bukatu',
+  confirmQ:'Ziur zaude?',confirmBody:'Azterketa hau behin betiko ezabatuko da.',
+  confirmDel:'🗑️ Ezabatu',
+  errNoPhoto:'Mesedez, igo argazkia lehenik',
+  errNoKey:'Mesedez, sartu zure Gemini API gakoa goian',
+  errParse:'IA-ren erantzuna ezin izan da irakurri',
+  galdera:'Galdera',
+  apikeyTitle:'Sartu zure Google Gemini API gakoa',
+  apikeyDesc:'Google AI Studio-tik lortutako gakoa behar da IA-k lan egiteko. Behin gordeta, ez duzu berriro sartu beharko.',
+  apikeySave:'💾 Gorde',apikeySaved:'✓ API gakoa gordeta',
+  correctOpt:'Zuzena',markedOpt:'Markatu',wrongOpt:'Okerra',
+},
+es:{
+  appTitle:'📚 Corrector de Exámenes',
+  appSubtitle:'Herramienta inteligente para corregir exámenes de Historia',
+  myExams:'Mis Exámenes',
+  newExam:'＋ Nuevo Examen',
+  noExams:'Todavía no hay exámenes guardados',
+  noExamsHint:'Crea tu primer examen con el botón de abajo',
+  createFirst:'＋ Crear primer examen',
+  q:'preguntas',pts:'puntos',
+  correct:'✏️ Corregir',edit:'⚙️ Editar',del:'🗑️ Eliminar',
+  newExamT:'Nuevo Examen',editExamT:'Editar Examen',
+  back:'← Atrás',
+  nameLabel:'Nombre del examen *',nameHint:'Nombre para identificar el examen',
+  namePH:'ej: Edad Media — 1ª evaluación',
+  questionsLbl:'Preguntas',addQ:'＋ Añadir',
+  qtLuze:'📝 Pregunta larga',qtTest:'☑️ Test',
+  statementLbl:'Enunciado *',statementPH:'Escribe el enunciado de la pregunta...',
+  maxScoreLbl:'Puntuación máxima *',
+  modelLbl:'Respuesta modelo',
+  fullBtn:'📄 Respuesta Completa',kpBtn:'🔑 Puntos Clave',bothBtn:'✨ Ambos',
+  modelFullLbl:'Respuesta modelo completa',
+  modelFullPH:'Respuesta que daría un alumno excelente...',
+  kpLbl:'Puntos clave',kpHint:'Conceptos principales que debe incluir la respuesta',
+  kpPH:'. concepto',addKp:'＋ Añadir concepto',
+  testOptionsLbl:'Opciones del test',
+  testOptionPH:'. opción',
+  testCorrectLbl:'Respuesta correcta',
+  testScoreCorrect:'Correcta: ',testScoreWrong:'Incorrecta: ',
+  cancel:'Cancelar',save:'💾 Guardar',delQ:'🗑️ Eliminar',
+  saved:'Examen guardado correctamente ✓',deleted:'Examen eliminado',
+  errName:'Por favor, introduce el nombre del examen',
+  errMinQ:'Añade al menos una pregunta',
+  errStmt:'Todas las preguntas necesitan un enunciado',
+  errOneQ:'Se necesita al menos una pregunta',
+  errTestOpts:'Las preguntas test necesitan al menos 2 opciones',
+  corrTitle:'Corregir',backHome:'← Inicio',
+  step1:'Subir fotos',step2:'Análisis IA',
+  photoTitle:'📸 Foto del examen',
+  cameraBtn:'📸 \u00a0Sacar foto',galleryBtn:'📁 \u00a0Galería',
+  mobileHint:'📱 Puedes subir una o varias fotos',
+  photosLoaded:'foto(s) cargada(s)',
+  startAI:'🤖 Iniciar análisis IA →',
+  analyzing:'🤖 La IA está analizando el examen...',
+  analyzingDesc:'Leyendo las imágenes y analizando las respuestas',
+  analyzingTime:'Esto puede tardar 20–40 segundos',
+  errTitle:'Ha ocurrido un error',retry:'🔄 Volver a intentar',
+  photoRef:'📄 Fotos del examen',
+  studentAns:'📝 Respuesta del alumno (leída por IA)',
+  studentMark:'📝 Marcación detectada por IA',
+  aiSug:'🤖 Sugerencia de la IA',
+  why:'Por qué:',
+  yourScore:'✏️ Tu puntuación final',
+  totalLbl:'📊 Calificación final',
+  another:'← Otro examen',finish:'✓ Terminar',
+  confirmQ:'¿Seguro que quieres eliminar?',confirmBody:'Este examen se eliminará permanentemente.',
+  confirmDel:'🗑️ Eliminar',
+  errNoPhoto:'Por favor, sube al menos una foto primero',
+  errNoKey:'Por favor, introduce tu API key de Gemini arriba',
+  errParse:'No se pudo procesar la respuesta de la IA',
+  galdera:'Pregunta',
+  apikeyTitle:'Introduce tu API key de Google Gemini',
+  apikeyDesc:'Necesitas la clave de Google AI Studio para que la IA funcione. Una vez guardada, no tendrás que volver a introducirla.',
+  apikeySave:'💾 Guardar',apikeySaved:'✓ API key guardada',
+  correctOpt:'Correcta',markedOpt:'Marcada',wrongOpt:'Incorrecta',
+},
+};
+
+// ══════════════════════════════════════════════════════
+//  ESTADO
+// ══════════════════════════════════════════════════════
+let lang         = localStorage.getItem('lang')  || 'eu';
+let darkMode     = localStorage.getItem('theme') === 'dark';
+let currentExamId= null;
+let questions    = [];
+let scores       = {};
+let pendingDelId = null;
+
+// Multi-foto: array de {b64, type, dataUrl}
+let uploadedPhotos = [];
+
+function T(k){ return LANG[lang][k] || LANG.eu[k] || k; }
+
+// ── API KEY ──
+function getApiKey(){ return localStorage.getItem('gemini_api_key')||''; }
+function saveApiKey(){
+  const v = document.getElementById('apikeyInput').value.trim();
+  if(!v){ showAlert(T('errNoKey'),'error'); return; }
+  localStorage.setItem('gemini_api_key',v);
+  document.getElementById('apikeySaved').style.display='block';
+  document.getElementById('apikeyInput').value='';
+  setTimeout(updateApikeyBanner,1200);
+}
+function updateApikeyBanner(){
+  const key=getApiKey();
+  const banner=document.getElementById('apikeyBanner');
+  if(key){
+    banner.style.background='linear-gradient(135deg,#f0fdf4,#dcfce7)';
+    banner.style.borderColor='#16a34a';
+    document.getElementById('apikeyTitle').textContent='✓ '+(lang==='eu'?'API gakoa konfiguratuta':'API key configurada');
+    document.getElementById('apikeyDesc').textContent=lang==='eu'
+      ?'Gemini API gakoa gordeta dago. Aldatzeko, sartu berria.'
+      :'La API key está guardada. Para cambiarla, introduce una nueva.';
+    document.getElementById('apikeySaved').style.display='block';
+  } else {
+    banner.style.background='';banner.style.borderColor='';
+    document.getElementById('apikeyTitle').textContent=T('apikeyTitle');
+    document.getElementById('apikeyDesc').textContent=T('apikeyDesc');
+    document.getElementById('apikeySaved').style.display='none';
+  }
+  document.getElementById('apikeyBtn').textContent=T('apikeySave');
+}
+
+// ── TEMA ──
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme',darkMode?'dark':'');
+  document.getElementById('themeBtn').textContent=darkMode?'☀️':'🌙';
+}
+
+// ── IDIOMA ──
+function applyLang(){
+  document.getElementById('hTitle').textContent=T('appTitle');
+  document.getElementById('hSubtitle').textContent=T('appSubtitle');
+  document.getElementById('langBtn').textContent=lang==='eu'?'ES':'EU';
+  document.getElementById('hMyExams').textContent=T('myExams');
+  document.getElementById('hNewExamBtn').textContent=T('newExam');
+  document.getElementById('configBackBtn').textContent=T('back');
+  document.getElementById('lExamName').textContent=T('nameLabel');
+  document.getElementById('examNameInput').placeholder=T('namePH');
+  document.getElementById('lExamNameHint').textContent=T('nameHint');
+  document.getElementById('lQuestions').innerHTML=
+    T('questionsLbl')+' <span id="qCount" style="color:var(--text-muted);font-size:0.85rem;">('+questions.length+')</span>';
+  document.getElementById('addQBtn').textContent=T('addQ');
+  document.getElementById('configCancelBtn').textContent=T('cancel');
+  document.getElementById('configSaveBtn').textContent=T('save');
+  document.getElementById('corrBackBtn').textContent=T('backHome');
+  document.getElementById('s1l').textContent=T('step1');
+  document.getElementById('s2l').textContent=T('step2');
+  document.getElementById('photoCardTitle').textContent=T('photoTitle');
+  document.getElementById('cameraBtn').textContent=T('cameraBtn');
+  document.getElementById('galleryBtnText').textContent=T('galleryBtn');
+  document.getElementById('mobileHint').textContent=T('mobileHint');
+  document.getElementById('startAIBtn').textContent=T('startAI');
+  document.getElementById('analyzingTitle').textContent=T('analyzing');
+  document.getElementById('analyzingDesc').textContent=T('analyzingDesc');
+  document.getElementById('analyzingTime').textContent=T('analyzingTime');
+  document.getElementById('errorTitle').textContent=T('errTitle');
+  document.getElementById('errBackBtn').textContent=T('back');
+  document.getElementById('errRetryBtn').textContent=T('retry');
+  document.getElementById('photoRefLbl').textContent=T('photoRef');
+  document.getElementById('totalLbl').textContent=T('totalLbl');
+  document.getElementById('anotherBtn').textContent=T('another');
+  document.getElementById('finishBtn').textContent=T('finish');
+  document.getElementById('modalTitle').textContent=T('confirmQ');
+  document.getElementById('modalBody').textContent=T('confirmBody');
+  document.getElementById('modalCancelBtn').textContent=T('cancel');
+  document.getElementById('modalConfirmBtn').textContent=T('confirmDel');
+  updateApikeyBanner();
+  renderExamList();
+  if(questions.length>0) renderQuestions();
+}
+
+document.getElementById('langBtn').addEventListener('click',()=>{
+  lang=lang==='eu'?'es':'eu'; localStorage.setItem('lang',lang); applyLang();
+});
+document.getElementById('themeBtn').addEventListener('click',()=>{
+  darkMode=!darkMode; localStorage.setItem('theme',darkMode?'dark':'light'); applyTheme();
+});
+document.getElementById('apikeyInput').addEventListener('keydown',e=>{ if(e.key==='Enter') saveApiKey(); });
+
+// ── ALERTAS ──
+function showAlert(msg,type='success'){
+  const b=document.getElementById('alertBox');
+  b.className='alert alert-'+type;b.textContent=msg;b.classList.remove('hidden');
+  clearTimeout(b._t); b._t=setTimeout(()=>b.classList.add('hidden'),4000);
+}
+
+// ── NAVEGACIÓN ──
+function showView(id){
+  ['viewHome','viewConfig','viewCorrection'].forEach(v=>
+    document.getElementById(v).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='viewHome') renderExamList();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goNewExam(){
+  currentExamId=null; questions=[];
+  document.getElementById('examNameInput').value='';
+  document.getElementById('configTitle').textContent=T('newExamT');
+  renderQuestions(); addQuestion(); showView('viewConfig');
+}
+
+// ── STORAGE ──
+function getExams(){ try{ return JSON.parse(localStorage.getItem('azterketak_exams')||'{}'); }catch(e){return{};} }
+function setExams(o){ localStorage.setItem('azterketak_exams',JSON.stringify(o)); }
+
+// ── LISTA EXÁMENES ──
+function renderExamList(){
+  const all=getExams(); const keys=Object.keys(all);
+  const el=document.getElementById('examList');
+  if(!keys.length){
+    el.innerHTML=`<div class="card"><div class="empty-state">
+      <div class="empty-state-icon">📝</div>
+      <h3>${T('noExams')}</h3><p>${T('noExamsHint')}</p>
+      <button class="btn btn-primary" onclick="goNewExam()">${T('createFirst')}</button>
+    </div></div>`; return;
+  }
+  el.innerHTML='<div class="exam-list">'+keys.map(id=>{
+    const e=all[id];
+    const tot=e.questions.reduce((s,q)=>s+q.maxScore,0);
+    const date=new Date(e.createdAt).toLocaleDateString(lang==='eu'?'eu-ES':'es-ES');
+    const testCount=e.questions.filter(q=>q.qtype==='test').length;
+    const luzeCount=e.questions.filter(q=>q.qtype!=='test').length;
+    const typePills=[]
+    if(luzeCount) typePills.push(`<span style="font-size:0.72rem;background:rgba(45,106,79,0.12);color:var(--green);padding:2px 7px;border-radius:10px;font-weight:600;">📝 ${luzeCount}</span>`);
+    if(testCount) typePills.push(`<span style="font-size:0.72rem;background:rgba(124,58,237,0.1);color:var(--purple);padding:2px 7px;border-radius:10px;font-weight:600;">☑️ ${testCount}</span>`);
+    return `<div class="exam-card">
+      <div class="exam-card-top">
+        <div>
+          <div class="exam-card-name">${e.name}</div>
+          <div class="exam-card-meta">
+            <span>📋 ${e.questions.length} ${T('q')}</span>
+            <span>📅 ${date}</span>
+            ${typePills.join('')}
+          </div>
+        </div>
+        <span class="exam-badge">${tot} ${T('pts')}</span>
+      </div>
+      <div class="exam-card-actions">
+        <button class="btn btn-primary btn-sm"   onclick="openCorrection('${id}')">${T('correct')}</button>
+        <button class="btn btn-secondary btn-sm" onclick="editExam('${id}')">${T('edit')}</button>
+        <button class="btn btn-danger btn-sm"    onclick="askDelete('${id}')">${T('del')}</button>
+      </div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+// ── BORRAR ──
+function askDelete(id){ pendingDelId=id; document.getElementById('deleteModal').classList.remove('hidden'); }
+document.getElementById('modalCancelBtn').addEventListener('click',()=>{
+  document.getElementById('deleteModal').classList.add('hidden'); pendingDelId=null;
+});
+document.getElementById('modalConfirmBtn').addEventListener('click',()=>{
+  document.getElementById('deleteModal').classList.add('hidden');
+  if(!pendingDelId) return;
+  const all=getExams(); delete all[pendingDelId]; setExams(all);
+  pendingDelId=null; showAlert(T('deleted')); renderExamList();
+});
+document.getElementById('deleteModal').addEventListener('click',function(e){
+  if(e.target===this){this.classList.add('hidden');pendingDelId=null;}
+});
+
+// ── GUARDAR EXAMEN ──
+function saveExam(){
+  const name=document.getElementById('examNameInput').value.trim();
+  if(!name){showAlert(T('errName'),'error');return;}
+  if(!questions.length){showAlert(T('errMinQ'),'error');return;}
+  if(questions.some(q=>!q.statement.trim())){showAlert(T('errStmt'),'error');return;}
+  // Validar test options
+  for(const q of questions){
+    if(q.qtype==='test'){
+      const opts=q.testOptions.filter(o=>o.trim());
+      if(opts.length<2){showAlert(T('errTestOpts'),'error');return;}
+    }
+  }
+  const all=getExams();
+  const id=currentExamId||'exam_'+Date.now();
+  all[id]={id,name,questions:questions.map(q=>({...q,testOptions:[...(q.testOptions||[])]})),
+    createdAt:all[id]?all[id].createdAt:new Date().toISOString()};
+  setExams(all); showAlert(T('saved')); showView('viewHome');
+}
+
+// ── EDITAR ──
+function editExam(id){
+  const exam=getExams()[id]; if(!exam) return;
+  currentExamId=id;
+  questions=exam.questions.map(q=>({...q,testOptions:[...(q.testOptions||['','','',''])]}));
+  document.getElementById('examNameInput').value=exam.name;
+  document.getElementById('configTitle').textContent=T('editExamT');
+  renderQuestions(); showView('viewConfig');
+}
+
+// ── GESTIÓN PREGUNTAS ──
+function addQuestion(){
+  questions.push({
+    id:'q_'+Date.now(),qtype:'luze',statement:'',maxScore:2,
+    answerType:'full',modelAnswer:'',keyPoints:[''],
+    testOptions:['','','',''],testCorrect:'A',
+    scoreCorrect:1,scoreWrong:0
+  });
+  renderQuestions();
+}
+function removeQuestion(i){
+  if(questions.length<=1){showAlert(T('errOneQ'),'error');return;}
+  questions.splice(i,1); renderQuestions();
+}
+function updateQ(i,field,val){
+  questions[i][field]=val;
+  if(field==='qtype'||field==='answerType') renderQuestions();
+}
+function addKP(i){questions[i].keyPoints.push('');renderQuestions();}
+function removeKP(i,k){if(questions[i].keyPoints.length>1){questions[i].keyPoints.splice(k,1);renderQuestions();}}
+function updateKP(i,k,v){questions[i].keyPoints[k]=v;}
+function updateTestOpt(i,k,v){questions[i].testOptions[k]=v;}
+function addTestOpt(i){questions[i].testOptions.push('');renderQuestions();}
+function removeTestOpt(i,k){if(questions[i].testOptions.length>2){questions[i].testOptions.splice(k,1);renderQuestions();}}
+
+const LETTERS=['A','B','C','D','E','F'];
+
+function renderQuestions(){
+  const el=document.getElementById('questionList');
+  const qc=document.getElementById('qCount');
+  if(qc) qc.textContent='('+questions.length+')';
+
+  el.innerHTML=questions.map((q,i)=>{
+    const isTest=q.qtype==='test';
+    const badgeClass=isTest?'badge-test':'badge-luze';
+    const cardClass=isTest?'question-card is-test':'question-card';
+
+    // ── Sección respuesta para galdera luzeak ──
+    const luzeSection=!isTest?`
+      <div class="form-group">
+        <label class="form-label">${T('modelLbl')}</label>
+        <div class="answer-type-sel">
+          <button class="atbtn ${q.answerType==='full'?'active':''}"     onclick="updateQ(${i},'answerType','full')">${T('fullBtn')}</button>
+          <button class="atbtn ${q.answerType==='keypoints'?'active':''}" onclick="updateQ(${i},'answerType','keypoints')">${T('kpBtn')}</button>
+          <button class="atbtn ${q.answerType==='both'?'active':''}"     onclick="updateQ(${i},'answerType','both')">${T('bothBtn')}</button>
+        </div>
+        ${q.answerType==='full'||q.answerType==='both'?`
+          <label class="form-label">${T('modelFullLbl')}</label>
+          <textarea class="form-textarea" style="min-height:100px" placeholder="${T('modelFullPH')}"
+            oninput="updateQ(${i},'modelAnswer',this.value)">${q.modelAnswer}</textarea>
+        `:''}
+        ${q.answerType==='keypoints'||q.answerType==='both'?`
+          <label class="form-label" style="margin-top:8px">${T('kpLbl')}</label>
+          <p class="form-hint" style="margin-bottom:8px">${T('kpHint')}</p>
+          ${q.keyPoints.map((kp,k)=>`
+          <div class="kp-row">
+            <div class="kp-num">${k+1}</div>
+            <input type="text" class="form-input" value="${kp}"
+              placeholder="${k+1}${T('kpPH')}" oninput="updateKP(${i},${k},this.value)">
+            ${q.keyPoints.length>1?`<button class="btn btn-danger btn-sm" onclick="removeKP(${i},${k})">✕</button>`:''}
+          </div>`).join('')}
+          <button class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="addKP(${i})">${T('addKp')}</button>
+        `:''}
+      </div>`:''
+
+    // ── Sección opciones test ──
+    const testSection=isTest?`
+      <div class="form-group">
+        <label class="form-label">${T('testOptionsLbl')}</label>
+        <div class="test-options">
+          ${q.testOptions.map((opt,k)=>`
+          <div class="test-opt-row">
+            <div class="test-opt-letter">${LETTERS[k]||k+1}</div>
+            <input type="text" class="form-input" value="${opt}"
+              placeholder="${LETTERS[k]||k+1}${T('testOptionPH')}"
+              oninput="updateTestOpt(${i},${k},this.value)">
+            ${q.testOptions.length>2?`<button class="btn btn-danger btn-sm" onclick="removeTestOpt(${i},${k})">✕</button>`:''}
+          </div>`).join('')}
+          ${q.testOptions.length<6?`<button class="btn btn-secondary btn-sm" style="margin-top:5px" onclick="addTestOpt(${i})">＋ Aukera</button>`:''}
+        </div>
+        <div style="margin-top:12px;">
+          <div class="test-correct-lbl">${T('testCorrectLbl')}</div>
+          <div class="test-correct-sel">
+            ${q.testOptions.map((_,k)=>`
+            <button class="tcbtn ${q.testCorrect===LETTERS[k]?'active':''}"
+              onclick="updateQ(${i},'testCorrect','${LETTERS[k]}')">${LETTERS[k]||k+1}</button>`).join('')}
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:100px;">
+            <label class="form-label" style="font-size:0.78rem;">${T('testScoreCorrect')}</label>
+            <input type="number" class="form-input form-input-sm" value="${q.scoreCorrect??1}" min="0" step="0.25"
+              onchange="updateQ(${i},'scoreCorrect',parseFloat(this.value))">
+          </div>
+          <div style="flex:1;min-width:100px;">
+            <label class="form-label" style="font-size:0.78rem;">${T('testScoreWrong')}</label>
+            <input type="number" class="form-input form-input-sm" value="${q.scoreWrong??0}" min="-5" step="0.25"
+              onchange="updateQ(${i},'scoreWrong',parseFloat(this.value))">
+          </div>
+        </div>
+      </div>`:''
+
+    return `<div class="${cardClass}">
+      <div class="question-card-header">
+        <span class="question-badge ${badgeClass}">${i+1}. ${isTest?T('qtTest'):T('qtLuze')}</span>
+        ${questions.length>1?`<button class="btn btn-danger btn-sm" onclick="removeQuestion(${i})">${T('delQ')}</button>`:''}
+      </div>
+      <div class="qtype-sel">
+        <button class="qtbtn ${!isTest?'active-luze':''}" onclick="updateQ(${i},'qtype','luze')">${T('qtLuze')}</button>
+        <button class="qtbtn ${isTest?'active-test':''}"  onclick="updateQ(${i},'qtype','test')">${T('qtTest')}</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">${T('statementLbl')}</label>
+        <textarea class="form-textarea" placeholder="${T('statementPH')}"
+          oninput="updateQ(${i},'statement',this.value)">${q.statement}</textarea>
+      </div>
+      ${!isTest?`<div class="form-group">
+        <label class="form-label">${T('maxScoreLbl')}</label>
+        <input type="number" class="form-input form-input-sm" value="${q.maxScore}" min="0" step="0.5"
+          onchange="updateQ(${i},'maxScore',parseFloat(this.value))">
+      </div>`:''}
+      ${luzeSection}${testSection}
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  CORRECCIÓN
+// ══════════════════════════════════════════════════════
+function openCorrection(id){
+  const exam=getExams()[id]; if(!exam) return;
+  currentExamId=id;
+  document.getElementById('corrTitle').textContent=T('corrTitle')+': '+exam.name;
+  document.getElementById('corrMeta').textContent=
+    exam.questions.length+' '+T('q')+' · '+
+    exam.questions.reduce((s,q)=>s+q.maxScore,0)+' '+T('pts');
+  setStep(1); clearPhotos(); showView('viewCorrection');
+}
+
+function setStep(n){
+  const s2=n>=2;
+  document.getElementById('s1c').className='step-circle active';
+  document.getElementById('s1l').className='step-label active';
+  document.getElementById('s2c').className='step-circle'+(s2?' active':'');
+  document.getElementById('s2l').className='step-label'+(s2?' active':'');
+  document.getElementById('sLine').className='step-line'+(s2?' active':'');
+  document.getElementById('stepUpload').classList.toggle('hidden',n!==1);
+  document.getElementById('stepAnalysis').classList.toggle('hidden',n!==2);
+}
+
+function backToUpload(){
+  setStep(1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── MULTI-FOTO ──
+function clearPhotos(){
+  uploadedPhotos=[];
+  document.getElementById('fileInput').value='';
+  renderPhotoGrid();
+}
+
+function openCamera(){
+  const inp=document.createElement('input');
+  inp.type='file'; inp.accept='image/*'; inp.capture='environment';
+  inp.onchange=handleFiles; inp.click();
+}
+
+function handleFiles(e){
+  const files=Array.from(e.target.files||[]);
+  if(!files.length) return;
+  let loaded=0;
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      uploadedPhotos.push({
+        b64:ev.target.result.split(',')[1],
+        type:file.type,
+        dataUrl:ev.target.result
+      });
+      loaded++;
+      if(loaded===files.length) renderPhotoGrid();
+    };
+    reader.readAsDataURL(file);
+  });
+  // Reset input so same file can be re-added
+  e.target.value='';
+}
+
+function removePhoto(idx){
+  uploadedPhotos.splice(idx,1);
+  renderPhotoGrid();
+}
+
+function renderPhotoGrid(){
+  const grid=document.getElementById('photoGrid');
+  const bar=document.getElementById('photosReadyBar');
+  const txt=document.getElementById('photosReadyTxt');
+
+  grid.innerHTML=uploadedPhotos.map((p,i)=>`
+    <div class="photo-thumb">
+      <img src="${p.dataUrl}" alt="">
+      <div class="photo-thumb-num">${i+1}</div>
+      <button class="photo-thumb-del" onclick="removePhoto(${i})">✕</button>
+    </div>
+  `).join('')+`
+    <div class="photo-add-btn" onclick="document.getElementById('fileInput2').click()">
+      <div class="photo-add-icon">＋</div>
+      <span>${lang==='eu'?'Gehitu':'Añadir'}</span>
+    </div>
+    <input type="file" id="fileInput2" accept="image/*" multiple class="hidden" onchange="handleFiles(event)">
+  `;
+
+  if(uploadedPhotos.length>0){
+    bar.classList.remove('hidden');
+    txt.textContent='✓ '+uploadedPhotos.length+' '+T('photosLoaded');
+  } else {
+    bar.classList.add('hidden');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  ANÁLISIS IA — Gemini 1.5 Flash
+// ══════════════════════════════════════════════════════
+async function startAnalysis(){
+  if(!uploadedPhotos.length){ showAlert(T('errNoPhoto'),'error'); return; }
+  const apiKey=getApiKey();
+  if(!apiKey){ showAlert(T('errNoKey'),'error'); backToUpload(); return; }
+
+  setStep(2);
+  document.getElementById('analyzingBox').classList.remove('hidden');
+  document.getElementById('errorBox').classList.add('hidden');
+  document.getElementById('resultsBox').classList.add('hidden');
+
+  const exam=getExams()[currentExamId]; if(!exam) return;
+
+  // Construir info de preguntas
+  const qInfo=exam.questions.map((q,i)=>{
+    let s=`${i+1}. ${lang==='eu'?'GALDERA':'PREGUNTA'} [${q.qtype==='test'?'TEST':'LUZE'}]\n`;
+    s+=`${lang==='eu'?'Enuntziatua':'Enunciado'}: ${q.statement}\n`;
+    if(q.qtype==='test'){
+      s+=`${lang==='eu'?'Aukerak':'Opciones'}:\n`;
+      q.testOptions.filter(o=>o.trim()).forEach((o,k)=>{ s+=`  ${LETTERS[k]}. ${o}\n`; });
+      s+=`${lang==='eu'?'Erantzun zuzena':'Respuesta correcta'}: ${q.testCorrect}\n`;
+      s+=`${lang==='eu'?'Puntuak (zuzena/okerra)':'Puntos (correcta/incorrecta)'}: +${q.scoreCorrect??1} / ${q.scoreWrong??0}\n`;
+    } else {
+      s+=`${lang==='eu'?'Gehienezko puntuazioa':'Puntuación máxima'}: ${q.maxScore} ${T('pts')}\n`;
+      if((q.answerType==='full'||q.answerType==='both')&&q.modelAnswer)
+        s+=`\n${lang==='eu'?'EREDUZKO ERANTZUNA':'RESPUESTA MODELO'}:\n${q.modelAnswer}\n`;
+      if(q.answerType==='keypoints'||q.answerType==='both'){
+        const kps=q.keyPoints.filter(k=>k.trim());
+        if(kps.length) s+=`\n${lang==='eu'?'GAKO-PUNTUAK':'PUNTOS CLAVE'}:\n• ${kps.join('\n• ')}\n`;
+      }
+    }
+    s+=`ID: ${q.id}`;
+    return s;
+  }).join('\n\n───────────────\n\n');
+
+  // Template JSON respuesta
+  const tmpl=exam.questions.reduce((a,q)=>{
+    if(q.qtype==='test'){
+      a[q.id]={aukeratutakoLetra:'?',zuzenadago:false,iradokitakoPuntuazioa:0,azalpena:'...'};
+    } else {
+      a[q.id]={irakurritakoErantzuna:'...',iradokitakoPuntuazioa:0,azalpena:'...'};
+    }
+    return a;
+  },{});
+
+  const testInstructions=lang==='eu'
+    ?`TEST galderentzat:
+- Begiratu arretaz zein aukera dagoen markatuta, biribildu, gurutzatu edo nabarmenduta
+- "aukeratutakoLetra" eremuan jarri ikaslearen aukera (A, B, C, D...)
+- "zuzenadago" eremuan jarri true edo false
+- "iradokitakoPuntuazioa" automatikoki kalkulatu (zuzena: scoreCorrect, okerra: scoreWrong)
+- "azalpena" labur azaldu zer ikusi duzun`
+    :`TEST: detecta que opcion esta marcada/rodeada/senalada visualmente.
+- En "aukeratutakoLetra" pon la letra marcada (A, B, C, D...)
+- En "zuzenadago" pon true o false
+- En "iradokitakoPuntuazioa" calcula el puntaje correcto
+- En "azalpena" describe brevemente lo que ves`
+
+  const prompt=lang==='eu'
+    ?`Historiako irakasle bat naiz. Argazki bat edo gehiago dauzkazu ikasle baten azterketa batekin.
+
+AZTERKETAREN GALDERAK:
+${qInfo}
+
+${testInstructions}
+
+GALDERA LUZEENTZAT:
+- Irakurri ikaslearen erantzuna eta konparatu ereduarekin
+- Puntuazio bat eman 0 eta gehienezkoaren artean
+- Azaldu labur zergatik (1-2 esaldi, euskaraz)
+
+GARRANTZITSUA: Argazkietan agertzen diren orrialdeak ordena ezagutu eta galderak ondo lotu.
+
+ERANTZUN SOILIK JSON HONETAN, BESTE EZER GABE:
+${JSON.stringify(tmpl,null,2)}`
+    :`Soy profesor de Historia. Tienes una o varias fotos del examen de un alumno.
+
+PREGUNTAS DEL EXAMEN:
+${qInfo}
+
+${testInstructions}
+
+PARA PREGUNTAS LARGAS:
+- Lee la respuesta del alumno y compárala con el modelo
+- Da una puntuación entre 0 y el máximo
+- Explica brevemente por qué (1-2 frases, en español)
+
+IMPORTANTE: Si hay varias páginas, identifícalas y asocia bien cada respuesta a su pregunta.
+
+RESPONDE SOLO CON ESTE JSON, SIN NADA MÁS:
+${JSON.stringify(tmpl,null,2)}`;
+
+  try {
+    const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+    // Construir partes: todas las imágenes + el prompt
+    const parts=uploadedPhotos.map(p=>({
+      inline_data:{mime_type:p.type,data:p.b64}
+    }));
+    parts.push({text:prompt});
+
+    const res=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        contents:[{parts}],
+        generationConfig:{temperature:0.1,maxOutputTokens:4096}
+      })
+    });
+
+    if(!res.ok){
+      const errData=await res.json().catch(()=>({}));
+      throw new Error(errData?.error?.message||('API error '+res.status));
+    }
+
+    const data=await res.json();
+    const txt=data?.candidates?.[0]?.content?.parts?.[0]?.text||'';
+    const match=txt.match(/\{[\s\S]*\}/);
+    if(!match) throw new Error(T('errParse'));
+    renderResults(exam,JSON.parse(match[0]));
+
+  } catch(err){
+    console.error(err);
+    document.getElementById('analyzingBox').classList.add('hidden');
+    document.getElementById('errorBox').classList.remove('hidden');
+    document.getElementById('errorMsg').textContent=err.message;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  RESULTADOS
+// ══════════════════════════════════════════════════════
+function renderResults(exam,analysis){
+  document.getElementById('analyzingBox').classList.add('hidden');
+  scores={};
+
+  // Mostrar miniaturas de referencia
+  const refGrid=document.getElementById('resultsPhotoGrid');
+  refGrid.innerHTML=uploadedPhotos.map(p=>`<img src="${p.dataUrl}" alt="">`).join('');
+
+  exam.questions.forEach(q=>{
+    const a=analysis[q.id];
+    if(q.qtype==='test'){
+      scores[q.id]=a?(parseFloat(a.iradokitakoPuntuazioa)||0):0;
+    } else {
+      scores[q.id]=a?(parseFloat(a.iradokitakoPuntuazioa)||0):0;
+    }
+  });
+
+  document.getElementById('resultsList').innerHTML=exam.questions.map((q,i)=>{
+    const a=analysis[q.id]||{};
+    const sg=parseFloat(a.iradokitakoPuntuazioa)||0;
+
+    if(q.qtype==='test'){
+      // Resultado test
+      const markedLetter=(a.aukeratutakoLetra||'?').toUpperCase();
+      const correctLetter=(q.testCorrect||'A').toUpperCase();
+      const isCorrect=a.zuzenadago===true||(markedLetter===correctLetter);
+      const scoreDisplay=isCorrect?`+${q.scoreCorrect??1}`:(q.scoreWrong??0);
+      const opts=q.testOptions.map((opt,k)=>{
+        if(!opt.trim()) return '';
+        const letter=LETTERS[k];
+        const isMark=letter===markedLetter;
+        const isCorr=letter===correctLetter;
+        let cls='test-result-opt';
+        if(isCorr&&isMark) cls+=' is-correct is-marked';
+        else if(isCorr) cls+=' is-correct';
+        else if(isMark) cls+=' is-wrong';
+        const icon=isCorr?'✓':isMark?'✗':'';
+        return `<div class="${cls}">${icon} <strong>${letter}.</strong> ${opt}</div>`;
+      }).join('');
+      return `<div class="result-q result-test">
+        <div class="result-q-hdr">
+          <div class="result-q-title">
+            <span style="background:var(--purple);color:white;padding:2px 9px;border-radius:12px;font-size:0.75rem;font-weight:700;margin-right:6px;">☑️ ${i+1}</span>
+            ${q.statement}
+          </div>
+          <span class="exam-badge" style="background:rgba(124,58,237,0.15);color:var(--purple);margin-left:10px;">
+            ${isCorrect?'✓':'✗'} ${scoreDisplay}
+          </span>
+        </div>
+        <div class="result-sec">
+          <div class="result-sec-lbl">${T('studentMark')}</div>
+          <div class="test-result-opts">${opts}</div>
+          <div style="margin-top:8px;font-size:0.82rem;color:var(--text-muted);">
+            ${lang==='eu'?`IA-k hautemandakoa: <strong style="color:var(--text)">${markedLetter}</strong>`:
+            `IA detectó: <strong style="color:var(--text)">${markedLetter}</strong>`}
+          </div>
+        </div>
+        <div class="result-sec">
+          <div class="ai-box ai-test">
+            <div class="result-sec-lbl" style="color:var(--purple)">${T('aiSug')}</div>
+            <div class="ai-score ai-score-test">${sg} ${T('pts')}</div>
+            <div class="result-sec-txt">${a.azalpena||'—'}</div>
+          </div>
+        </div>
+        <div class="result-sec">
+          <div class="teacher-box">
+            <div class="result-sec-lbl" style="color:var(--green)">${T('yourScore')}</div>
+            <div class="score-row">
+              <input type="number" class="score-inp" value="${sg}"
+                step="0.25" oninput="updateScore('${q.id}',parseFloat(this.value))">
+              <span class="score-max">${T('pts')}</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    } else {
+      // Resultado galdera luzea
+      return `<div class="result-q">
+        <div class="result-q-hdr">
+          <div class="result-q-title">
+            <span style="background:var(--green);color:white;padding:2px 9px;border-radius:12px;font-size:0.75rem;font-weight:700;margin-right:6px;">📝 ${i+1}</span>
+            ${q.statement}
+          </div>
+          <span class="exam-badge" style="margin-left:10px">${q.maxScore} ${T('pts')}</span>
+        </div>
+        <div class="result-sec">
+          <div class="result-sec-lbl">${T('studentAns')}</div>
+          <div class="result-sec-txt">${a.irakurritakoErantzuna||'—'}</div>
+        </div>
+        <div class="result-sec">
+          <div class="ai-box">
+            <div class="result-sec-lbl" style="color:var(--blue)">${T('aiSug')}</div>
+            <div class="ai-score">${sg} / ${q.maxScore} ${T('pts')}</div>
+            <div class="result-sec-txt"><strong>${T('why')}</strong> ${a.azalpena||'—'}</div>
+          </div>
+        </div>
+        <div class="result-sec">
+          <div class="teacher-box">
+            <div class="result-sec-lbl" style="color:var(--green)">${T('yourScore')}</div>
+            <div class="score-row">
+              <input type="number" class="score-inp" value="${sg}"
+                min="0" max="${q.maxScore}" step="0.25"
+                oninput="updateScore('${q.id}',parseFloat(this.value))">
+              <span class="score-max">/ ${q.maxScore} ${T('pts')}</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+  }).join('');
+
+  document.getElementById('resultsBox').classList.remove('hidden');
+  updateTotal(exam);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateScore(qid,val){
+  if(!isNaN(val)){
+    scores[qid]=val;
+    updateTotal(getExams()[currentExamId]);
+  }
+}
+function updateTotal(exam){
+  if(!exam) return;
+  const tot=Object.values(scores).reduce((s,v)=>s+v,0);
+  const max=exam.questions.reduce((s,q)=>{
+    if(q.qtype==='test') return s+(q.scoreCorrect??1);
+    return s+q.maxScore;
+  },0);
+  document.getElementById('totalScore').textContent=tot.toFixed(2)+' / '+max;
+}
+
+// ══════════════════════════════════════════════════════
+//  ARRANQUE
+// ══════════════════════════════════════════════════════
+applyTheme();
+applyLang();
+showView('viewHome');
+</script>
+</body>
+</html>
