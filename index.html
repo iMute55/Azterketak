@@ -424,37 +424,32 @@ body{
 <body>
 
 <header class="header">
-  <div class="header-left">
+  <div class="header-left" style="cursor:pointer;" onclick="showView('viewHome')">
     <h1 id="hTitle">📚 Azterketak Zuzentzailea</h1>
     <p  id="hSubtitle">Historiako azterketak zuzentzeko tresna adimenduna</p>
   </div>
   <div class="header-right">
+    <button class="hbtn" id="keyBtn" onclick="toggleApiPanel()" title="API key">🔑</button>
     <button class="hbtn" id="langBtn">ES</button>
     <button class="hbtn" id="themeBtn">🌙</button>
   </div>
 </header>
+
+<!-- Panel API key deslizante -->
+<div id="apiPanel" class="hidden" style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-bottom:2px solid #f59e0b;padding:14px 18px;animation:slideIn 0.2s ease;">
+  <div style="max-width:860px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span style="font-size:0.88rem;font-weight:700;color:#92400e;flex-shrink:0;" id="apiPanelLabel">API key</span>
+    <input type="password" class="apikey-input" id="apikeyInput" placeholder="AIza..." autocomplete="off" style="flex:1;min-width:180px;max-width:340px;">
+    <button class="btn btn-primary btn-sm" id="apikeyBtn" onclick="saveApiKey()">💾 Gorde</button>
+    <button class="btn btn-secondary btn-sm" onclick="toggleApiPanel()">✕</button>
+  </div>
+</div>
 
 <main class="main">
   <div id="alertBox" class="hidden"></div>
 
   <!-- ═══ PANTALLA INICIO ═══ -->
   <div id="viewHome" class="view">
-    <!-- API KEY BANNER -->
-    <div class="apikey-banner" id="apikeyBanner">
-      <div class="apikey-banner-row">
-        <div class="apikey-banner-icon">🔑</div>
-        <div class="apikey-banner-text" style="flex:1;">
-          <h3 id="apikeyTitle">Sartu zure Google Gemini API gakoa</h3>
-          <p  id="apikeyDesc">Google AI Studio-tik lortutako gakoa behar da IA-k lan egiteko.</p>
-          <div class="apikey-input-row">
-            <input type="password" class="apikey-input" id="apikeyInput" placeholder="AIza..." autocomplete="off">
-            <button class="btn btn-primary btn-sm" id="apikeyBtn" onclick="saveApiKey()">💾 Gorde</button>
-          </div>
-          <div class="apikey-saved" id="apikeySaved">✓ API gakoa gordeta</div>
-        </div>
-      </div>
-    </div>
-
     <div class="section-header">
       <h2 class="section-title" id="hMyExams">Nire Azterketak</h2>
       <button class="btn btn-primary" id="hNewExamBtn" onclick="goNewExam()">＋ Azterketa Berria</button>
@@ -760,32 +755,42 @@ function T(k){ return LANG[lang][k] || LANG.eu[k] || k; }
 
 // ── API KEY ──
 function getApiKey(){ return localStorage.getItem('gemini_api_key')||''; }
+
+function toggleApiPanel(){
+  const panel = document.getElementById('apiPanel');
+  const isHidden = panel.classList.contains('hidden');
+  if(isHidden){
+    panel.classList.remove('hidden');
+    document.getElementById('apikeyInput').focus();
+  } else {
+    panel.classList.add('hidden');
+    document.getElementById('apikeyInput').value='';
+  }
+  updateKeyBtn();
+}
+
+function updateKeyBtn(){
+  const key = getApiKey();
+  const btn = document.getElementById('keyBtn');
+  btn.style.background = key ? 'rgba(22,163,74,0.35)' : 'rgba(255,255,255,0.15)';
+  btn.title = key
+    ? (lang==='eu' ? 'API gakoa konfiguratuta — aldatzeko sakatu' : 'API key configurada — pulsa para cambiar')
+    : (lang==='eu' ? 'API gakoa sartu' : 'Introducir API key');
+}
+
 function saveApiKey(){
   const v = document.getElementById('apikeyInput').value.trim();
   if(!v){ showAlert(T('errNoKey'),'error'); return; }
-  localStorage.setItem('gemini_api_key',v);
-  document.getElementById('apikeySaved').style.display='block';
+  localStorage.setItem('gemini_api_key', v);
   document.getElementById('apikeyInput').value='';
-  setTimeout(updateApikeyBanner,1200);
+  document.getElementById('apiPanel').classList.add('hidden');
+  updateKeyBtn();
+  showAlert(lang==='eu' ? '✓ API gakoa gordeta' : '✓ API key guardada');
 }
+
 function updateApikeyBanner(){
-  const key=getApiKey();
-  const banner=document.getElementById('apikeyBanner');
-  if(key){
-    banner.style.background='linear-gradient(135deg,#f0fdf4,#dcfce7)';
-    banner.style.borderColor='#16a34a';
-    document.getElementById('apikeyTitle').textContent='✓ '+(lang==='eu'?'API gakoa konfiguratuta':'API key configurada');
-    document.getElementById('apikeyDesc').textContent=lang==='eu'
-      ?'Gemini API gakoa gordeta dago. Aldatzeko, sartu berria.'
-      :'La API key está guardada. Para cambiarla, introduce una nueva.';
-    document.getElementById('apikeySaved').style.display='block';
-  } else {
-    banner.style.background='';banner.style.borderColor='';
-    document.getElementById('apikeyTitle').textContent=T('apikeyTitle');
-    document.getElementById('apikeyDesc').textContent=T('apikeyDesc');
-    document.getElementById('apikeySaved').style.display='none';
-  }
-  document.getElementById('apikeyBtn').textContent=T('apikeySave');
+  updateKeyBtn();
+  document.getElementById('apikeyBtn').textContent = T('apikeySave');
 }
 
 // ── TEMA ──
@@ -843,7 +848,7 @@ document.getElementById('langBtn').addEventListener('click',()=>{
 document.getElementById('themeBtn').addEventListener('click',()=>{
   darkMode=!darkMode; localStorage.setItem('theme',darkMode?'dark':'light'); applyTheme();
 });
-document.getElementById('apikeyInput').addEventListener('keydown',e=>{ if(e.key==='Enter') saveApiKey(); });
+document.getElementById('apikeyInput').addEventListener('keydown',e=>{ if(e.key==='Enter') saveApiKey(); if(e.key==='Escape') toggleApiPanel(); });
 
 // ── ALERTAS ──
 function showAlert(msg,type='success'){
