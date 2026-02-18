@@ -555,7 +555,11 @@ body{
           <div class="spinner"></div>
           <h3 id="analyzingTitle">🤖 IA azterketa aztertzen...</h3>
           <p  id="analyzingDesc">Argazkiak irakurtzen eta erantzunak aztertzen ari da</p>
-          <p  id="analyzingTime" class="timer-note">Honek 20–40 segundo iraun dezake</p>
+          <div style="margin-top:18px;display:inline-flex;align-items:center;gap:10px;background:var(--bg-subtle);border-radius:var(--radius);padding:10px 20px;border:1.5px solid var(--border);">
+            <span style="font-size:1.5rem;">⏱️</span>
+            <span id="timerDisplay" style="font-family:'Lora',serif;font-size:2rem;font-weight:700;color:var(--green);letter-spacing:-1px;min-width:52px;text-align:center;">0s</span>
+          </div>
+          <p  id="analyzingTime" class="timer-note" style="margin-top:10px;">Honek 20–40 segundo iraun dezake</p>
         </div>
       </div>
 
@@ -676,10 +680,10 @@ eu:{
   apikeyDesc:'Google AI Studio-tik lortutako gakoa behar da IA-k lan egiteko. Behin gordeta, ez duzu berriro sartu beharko.',
   apikeySave:'💾 Gorde',apikeySaved:'✓ API gakoa gordeta',
   correctOpt:'Zuzena',markedOpt:'Markatu',wrongOpt:'Okerra',
-  duplicate:'📋 Kopiatu',
+  duplicate:'📋 Duplikatu',
   exportBtn:'📤 Esportatu',
   importBtn:'📥 Inportatu',
-  duplicated:'Azterketa kopiatu da ✓',
+  duplicated:'Azterketa duplikatu da ✓',
   exportOk:'Azterketa esportatu da ✓',
   importOk:'Azterketa inportatu da ✓',
   importErr:'Fitxategia ezin izan da irakurri',
@@ -1015,6 +1019,16 @@ function removeKP(i,k){if(questions[i].keyPoints.length>1){questions[i].keyPoint
 function updateKP(i,k,v){questions[i].keyPoints[k]=v;}
 function updateTestOpt(i,k,v){questions[i].testOptions[k]=v;}
 function addTestOpt(i){questions[i].testOptions.push('');renderQuestions();}
+function setTestCorrect(i,k){
+  questions[i].testCorrect=LETTERS[k];
+  // Update buttons visually without full re-render
+  const container=document.getElementById('tcs-'+i);
+  if(container){
+    container.querySelectorAll('.tcbtn').forEach((btn,idx)=>{
+      btn.classList.toggle('active', idx===k);
+    });
+  }
+}
 function removeTestOpt(i,k){if(questions[i].testOptions.length>2){questions[i].testOptions.splice(k,1);renderQuestions();}}
 
 const LETTERS=['A','B','C','D','E','F'];
@@ -1074,10 +1088,10 @@ function renderQuestions(){
         </div>
         <div style="margin-top:12px;">
           <div class="test-correct-lbl">${T('testCorrectLbl')}</div>
-          <div class="test-correct-sel">
+          <div class="test-correct-sel" id="tcs-${i}">
             ${q.testOptions.map((_,k)=>`
             <button class="tcbtn ${q.testCorrect===LETTERS[k]?'active':''}"
-              onclick="updateQ(${i},'testCorrect','${LETTERS[k]}')">${LETTERS[k]||k+1}</button>`).join('')}
+              onclick="setTestCorrect(${i},${k})">${LETTERS[k]||k+1}</button>`).join('')}
           </div>
         </div>
         <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
@@ -1229,6 +1243,7 @@ async function startAnalysis(){
   document.getElementById('analyzingBox').classList.remove('hidden');
   document.getElementById('errorBox').classList.add('hidden');
   document.getElementById('resultsBox').classList.add('hidden');
+  startTimer();
 
   const exam=getExams()[currentExamId]; if(!exam) return;
 
@@ -1312,7 +1327,7 @@ RESPONDE SOLO CON ESTE JSON, SIN NADA MÁS:
 ${JSON.stringify(tmpl,null,2)}`;
 
   try {
-    const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+    const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     // Construir partes: todas las imágenes + el prompt
     const parts=uploadedPhotos.map(p=>({
@@ -1342,6 +1357,7 @@ ${JSON.stringify(tmpl,null,2)}`;
 
   } catch(err){
     console.error(err);
+    stopTimer();
     document.getElementById('analyzingBox').classList.add('hidden');
     document.getElementById('errorBox').classList.remove('hidden');
     document.getElementById('errorMsg').textContent=err.message;
@@ -1352,6 +1368,7 @@ ${JSON.stringify(tmpl,null,2)}`;
 //  RESULTADOS
 // ══════════════════════════════════════════════════════
 function renderResults(exam,analysis){
+  stopTimer();
   document.getElementById('analyzingBox').classList.add('hidden');
   scores={};
 
@@ -1481,6 +1498,32 @@ function updateTotal(exam){
     return s+q.maxScore;
   },0);
   document.getElementById('totalScore').textContent=tot.toFixed(2)+' / '+max;
+}
+
+// ══════════════════════════════════════════════════════
+//  TEMPORIZADOR
+// ══════════════════════════════════════════════════════
+let timerInterval = null;
+let timerSeconds  = 0;
+
+function startTimer(){
+  timerSeconds = 0;
+  const el = document.getElementById('timerDisplay');
+  if(el) el.textContent = '0s';
+  clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    timerSeconds++;
+    if(el) el.textContent = timerSeconds + 's';
+    // Color feedback: green < 30s, amber 30-60s, red > 60s
+    if(timerSeconds < 30)      el.style.color = 'var(--green)';
+    else if(timerSeconds < 60) el.style.color = 'var(--amber)';
+    else                       el.style.color = 'var(--red)';
+  }, 1000);
+}
+
+function stopTimer(){
+  clearInterval(timerInterval);
+  timerInterval = null;
 }
 
 // ══════════════════════════════════════════════════════
