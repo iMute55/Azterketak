@@ -452,7 +452,13 @@ body{
   <div id="viewHome" class="view">
     <div class="section-header">
       <h2 class="section-title" id="hMyExams">Nire Azterketak</h2>
-      <button class="btn btn-primary" id="hNewExamBtn" onclick="goNewExam()">＋ Azterketa Berria</button>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;">
+        <label style="cursor:pointer;">
+          <input type="file" id="importInput" accept=".json" class="hidden" onchange="importExam(event)">
+          <div class="btn btn-secondary btn-sm" id="importBtnLabel">📥 Inportatu</div>
+        </label>
+        <button class="btn btn-primary" id="hNewExamBtn" onclick="goNewExam()">＋ Azterketa Berria</button>
+      </div>
     </div>
     <div id="examList"></div>
   </div>
@@ -670,6 +676,15 @@ eu:{
   apikeyDesc:'Google AI Studio-tik lortutako gakoa behar da IA-k lan egiteko. Behin gordeta, ez duzu berriro sartu beharko.',
   apikeySave:'💾 Gorde',apikeySaved:'✓ API gakoa gordeta',
   correctOpt:'Zuzena',markedOpt:'Markatu',wrongOpt:'Okerra',
+  duplicate:'📋 Kopiatu',
+  exportBtn:'📤 Esportatu',
+  importBtn:'📥 Inportatu',
+  duplicated:'Azterketa kopiatu da ✓',
+  exportOk:'Azterketa esportatu da ✓',
+  importOk:'Azterketa inportatu da ✓',
+  importErr:'Fitxategia ezin izan da irakurri',
+  importErrFormat:'Fitxategi formatua ez da zuzena',
+  dragUp:'⬆️',dragDown:'⬇️',
 },
 es:{
   appTitle:'📚 Corrector de Exámenes',
@@ -735,6 +750,15 @@ es:{
   apikeyDesc:'Necesitas la clave de Google AI Studio para que la IA funcione. Una vez guardada, no tendrás que volver a introducirla.',
   apikeySave:'💾 Guardar',apikeySaved:'✓ API key guardada',
   correctOpt:'Correcta',markedOpt:'Marcada',wrongOpt:'Incorrecta',
+  duplicate:'📋 Duplicar',
+  exportBtn:'📤 Exportar',
+  importBtn:'📥 Importar',
+  duplicated:'Examen duplicado ✓',
+  exportOk:'Examen exportado ✓',
+  importOk:'Examen importado ✓',
+  importErr:'No se pudo leer el archivo',
+  importErrFormat:'El formato del archivo no es correcto',
+  dragUp:'⬆️',dragDown:'⬇️',
 },
 };
 
@@ -742,7 +766,9 @@ es:{
 //  ESTADO
 // ══════════════════════════════════════════════════════
 let lang         = localStorage.getItem('lang')  || 'eu';
-let darkMode     = localStorage.getItem('theme') === 'dark';
+// Auto dark mode: respect system preference unless user has overridden manually
+const savedTheme = localStorage.getItem('theme');
+let darkMode = savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
 let currentExamId= null;
 let questions    = [];
 let scores       = {};
@@ -838,6 +864,8 @@ function applyLang(){
   document.getElementById('modalCancelBtn').textContent=T('cancel');
   document.getElementById('modalConfirmBtn').textContent=T('confirmDel');
   updateApikeyBanner();
+  const ibl=document.getElementById('importBtnLabel');
+  if(ibl) ibl.textContent=T('importBtn');
   renderExamList();
   if(questions.length>0) renderQuestions();
 }
@@ -911,6 +939,8 @@ function renderExamList(){
       <div class="exam-card-actions">
         <button class="btn btn-primary btn-sm"   onclick="openCorrection('${id}')">${T('correct')}</button>
         <button class="btn btn-secondary btn-sm" onclick="editExam('${id}')">${T('edit')}</button>
+        <button class="btn btn-secondary btn-sm" onclick="duplicateExam('${id}')">${T('duplicate')}</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportExam('${id}')">${T('exportBtn')}</button>
         <button class="btn btn-danger btn-sm"    onclick="askDelete('${id}')">${T('del')}</button>
       </div>
     </div>`;
@@ -1067,7 +1097,11 @@ function renderQuestions(){
     return `<div class="${cardClass}">
       <div class="question-card-header">
         <span class="question-badge ${badgeClass}">${i+1}. ${isTest?T('qtTest'):T('qtLuze')}</span>
-        ${questions.length>1?`<button class="btn btn-danger btn-sm" onclick="removeQuestion(${i})">${T('delQ')}</button>`:''}
+        <div style="display:flex;gap:5px;align-items:center;">
+          ${i>0?`<button class="btn btn-secondary btn-sm" style="padding:0 9px;" onclick="moveQuestion(${i},-1)" title="Gora / Arriba">⬆️</button>`:''}
+          ${i<questions.length-1?`<button class="btn btn-secondary btn-sm" style="padding:0 9px;" onclick="moveQuestion(${i},1)" title="Behera / Abajo">⬇️</button>`:''}
+          ${questions.length>1?`<button class="btn btn-danger btn-sm" onclick="removeQuestion(${i})">${T('delQ')}</button>`:''}
+        </div>
       </div>
       <div class="qtype-sel">
         <button class="qtbtn ${!isTest?'active-luze':''}" onclick="updateQ(${i},'qtype','luze')">${T('qtLuze')}</button>
@@ -1278,7 +1312,7 @@ RESPONDE SOLO CON ESTE JSON, SIN NADA MÁS:
 ${JSON.stringify(tmpl,null,2)}`;
 
   try {
-    const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
     // Construir partes: todas las imágenes + el prompt
     const parts=uploadedPhotos.map(p=>({
@@ -1447,6 +1481,83 @@ function updateTotal(exam){
     return s+q.maxScore;
   },0);
   document.getElementById('totalScore').textContent=tot.toFixed(2)+' / '+max;
+}
+
+// ══════════════════════════════════════════════════════
+//  DUPLICAR EXAMEN
+// ══════════════════════════════════════════════════════
+function duplicateExam(id){
+  const all=getExams();
+  const exam=all[id]; if(!exam) return;
+  const newId='exam_'+Date.now();
+  const copy=JSON.parse(JSON.stringify(exam));
+  copy.id=newId;
+  copy.name=(lang==='eu'?'Kopia — ':'Copia — ')+exam.name;
+  copy.createdAt=new Date().toISOString();
+  // Give new IDs to questions to avoid conflicts
+  copy.questions=copy.questions.map(q=>({...q,id:'q_'+Date.now()+Math.random().toString(36).slice(2,6)}));
+  all[newId]=copy;
+  setExams(all);
+  showAlert(T('duplicated'));
+  renderExamList();
+}
+
+// ══════════════════════════════════════════════════════
+//  EXPORTAR EXAMEN (descarga .json)
+// ══════════════════════════════════════════════════════
+function exportExam(id){
+  const all=getExams();
+  const exam=all[id]; if(!exam) return;
+  const blob=new Blob([JSON.stringify(exam,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=exam.name.replace(/[^a-z0-9_\-]/gi,'_')+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showAlert(T('exportOk'));
+}
+
+// ══════════════════════════════════════════════════════
+//  IMPORTAR EXAMEN (desde .json)
+// ══════════════════════════════════════════════════════
+function importExam(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const exam=JSON.parse(ev.target.result);
+      // Basic validation
+      if(!exam.name||!Array.isArray(exam.questions)) throw new Error('format');
+      const all=getExams();
+      const newId='exam_'+Date.now();
+      exam.id=newId;
+      exam.createdAt=new Date().toISOString();
+      // Ensure questions have valid IDs
+      exam.questions=exam.questions.map(q=>({...q,id:'q_'+Date.now()+Math.random().toString(36).slice(2,6)}));
+      all[newId]=exam;
+      setExams(all);
+      showAlert(T('importOk'));
+      renderExamList();
+    }catch(err){
+      showAlert(err.message==='format'?T('importErrFormat'):T('importErr'),'error');
+    }
+    e.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════════════════
+//  REORDENAR PREGUNTAS
+// ══════════════════════════════════════════════════════
+function moveQuestion(i,dir){
+  const j=i+dir;
+  if(j<0||j>=questions.length) return;
+  [questions[i],questions[j]]=[questions[j],questions[i]];
+  renderQuestions();
+  // Scroll to keep context
+  const cards=document.querySelectorAll('.question-card');
+  if(cards[j]) cards[j].scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 // ══════════════════════════════════════════════════════
